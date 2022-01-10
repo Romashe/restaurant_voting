@@ -1,5 +1,6 @@
 package ru.shr.restaurant_voting.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Restaurant extends NamedEntity implements HasId {
     private List<MenuItem> menuItems;
 
     @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Vote> votes = new HashSet<>();
 }

@@ -30,7 +30,7 @@ public class MenuItem extends NamedEntity implements HasId {
     private LocalDate itemDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaraunt_id", nullable = false)
+    @JoinColumn(name = "restaurant_id", nullable = false)
     @JsonBackReference
     private Restaurant restaurant;
 }

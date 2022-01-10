@@ -12,7 +12,7 @@ VALUES ('Sahalin'),
        ('Metropol'),
        ('u Ashota');
 
-INSERT INTO MENU_ITEM (NAME, PRICE, ITEM_DATE, RESTARAUNT_ID)
+INSERT INTO MENU_ITEM (NAME, PRICE, ITEM_DATE, RESTAURANT_ID)
 VALUES ('Sibas', 100.25, CURRENT_DATE(), 1),
        ('Midii', 45.25, CURRENT_DATE(), 1),
        ('Olivie', 1000.05, CURRENT_DATE(), 2),
