@@ -2,6 +2,7 @@ package ru.shr.restaurant_voting.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import ru.shr.restaurant_voting.repository.RestaurantRepository;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,9 +74,13 @@ public class AdminRestaurantController {
     }
 
     @GetMapping("/{id}/menu")
-    public List<MenuItem> getRestaurantMenu(@PathVariable int id) {
+    public List<MenuItem> getRestaurantMenu(@PathVariable int id, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate menuDate) {
         log.info("get Restaurant with id={} All Menu ", id);
-        return menuItemRepository.findByRestaurantId(id);
+        if (menuDate == null) {
+            return menuItemRepository.findByRestaurantId(id);
+        } else {
+            return menuItemRepository.findByRestaurantIdFilteredByItemDate(id,menuDate);
+        }
     }
 
     @GetMapping("/{id}/menu/{menuItemId}")
