@@ -1,5 +1,6 @@
 package ru.shr.restaurant_voting.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -62,6 +63,8 @@ public class User extends NamedEntity implements HasIdAndEmail, Serializable {
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference
     private Set<Vote> votes = new HashSet<>();
 
     public User(User u) {

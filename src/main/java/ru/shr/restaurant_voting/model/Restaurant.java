@@ -28,5 +28,6 @@ public class Restaurant extends NamedEntity implements HasId {
     private List<MenuItem> menuItems;
 
     @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Vote> votes = new HashSet<>();
 }
