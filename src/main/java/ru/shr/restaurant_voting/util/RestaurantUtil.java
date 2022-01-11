@@ -12,7 +12,7 @@ public class RestaurantUtil {
 
     public static List<RestaurantTo> convertListTo(List<Restaurant> restaurants, LocalDate requestedDate){
         return restaurants.stream()
-                .map(rest -> createTo(rest, rest.getVotes().size(), requestedDate))
+                .map(rest -> createTo(rest, rest.getVotes().stream().filter(v -> v.getVoteDate().isEqual(requestedDate)).count(), requestedDate))
                 .sorted(RestaurantTo::compareTo)
                 .toList();
     }

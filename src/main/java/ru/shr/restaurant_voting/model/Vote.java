@@ -25,6 +25,7 @@ public class Vote extends BaseEntity implements HasId {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "restaurant_id")
+    @JsonIgnore
     private Restaurant restaurant;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -1,6 +1,6 @@
 package ru.shr.restaurant_voting.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +31,7 @@ public class MenuItem extends NamedEntity implements HasId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
-    @JsonBackReference
+//    @JsonBackReference
+    @JsonIgnore
     private Restaurant restaurant;
 }

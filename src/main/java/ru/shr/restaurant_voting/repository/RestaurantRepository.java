@@ -14,6 +14,6 @@ import java.util.List;
 public interface RestaurantRepository extends BaseRepository<Restaurant>{
 
     @EntityGraph(attributePaths = {"menuItems","votes"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT r FROM Restaurant r left join fetch r.menuItems m left join fetch r.votes v WHERE m.itemDate = :menuDate and v.voteDate = :menuDate")
+    @Query("SELECT r FROM Restaurant r left outer join r.menuItems m left outer join r.votes v WHERE m.itemDate = :menuDate")
     List<Restaurant> getAllWithMenu(LocalDate menuDate);
 }
