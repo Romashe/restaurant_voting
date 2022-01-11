@@ -1,6 +1,6 @@
 package ru.shr.restaurant_voting.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,13 +12,12 @@ import ru.shr.restaurant_voting.HasId;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "restaurant", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Restaurant extends NamedEntity implements HasId {
 
@@ -26,10 +25,11 @@ public class Restaurant extends NamedEntity implements HasId {
     @OrderBy("itemDate DESC")
     @JsonManagedReference
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
-    private List<MenuItem> menuItems;
+    @JsonIgnore
+    private Set<MenuItem> menuItems;
 
-    @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Set<Vote> votes = new HashSet<>();
 }
