@@ -19,6 +19,9 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Restaurant extends NamedEntity implements HasId {
+    public Restaurant(Integer id, String name) {
+        super(id, name);
+    }
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant", cascade = CascadeType.ALL)//, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("itemDate DESC")

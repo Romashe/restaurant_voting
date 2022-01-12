@@ -2,6 +2,7 @@ package ru.shr.restaurant_voting.web;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -36,21 +37,14 @@ import static ru.shr.restaurant_voting.web.UserRestaurantController.REST_URL;
 @RestController
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@RequiredArgsConstructor
 public class UserRestaurantController {
 
     public static final String REST_URL = "/api/restaurants";
-
-    @Autowired
-    RestaurantRepository restaurantRepository;
-
-    @Autowired
-    VoteRepository voteRepository;
-
-    @Autowired
-    MenuItemRepository menuItemRepository;
-
-    @Autowired
-    UserRepository userRepository;
+    final RestaurantRepository restaurantRepository;
+    final VoteRepository voteRepository;
+    final MenuItemRepository menuItemRepository;
+    final UserRepository userRepository;
 
     @GetMapping()
     @Operation(summary = "Main operation for get restaurants, it's menu and vote count by Requested Date",

@@ -18,6 +18,11 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Vote extends BaseEntity implements HasId {
+    public Vote(Integer id, LocalDate voteDate, Restaurant restaurant) {
+        super(id);
+        this.voteDate = voteDate;
+        this.restaurant = restaurant;
+    }
 
     @Column(name = "vote_date")
     @NotNull
@@ -25,7 +30,7 @@ public class Vote extends BaseEntity implements HasId {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "restaurant_id")
-    @JsonIgnore
+//    @JsonIgnore
     private Restaurant restaurant;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

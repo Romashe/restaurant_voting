@@ -1,5 +1,6 @@
 package ru.shr.restaurant_voting.web;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,14 +27,11 @@ import static ru.shr.restaurant_voting.web.AdminRestaurantController.REST_URL;
 @RestController
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@RequiredArgsConstructor
 public class AdminRestaurantController {
     public static final String REST_URL = "/api/admin/restaurants";
-
-    @Autowired
-    protected RestaurantRepository restaurantRepository;
-
-    @Autowired
-    protected MenuItemRepository menuItemRepository;
+    final RestaurantRepository restaurantRepository;
+    final MenuItemRepository menuItemRepository;
 
     @GetMapping
     public List<Restaurant> getAll() {
