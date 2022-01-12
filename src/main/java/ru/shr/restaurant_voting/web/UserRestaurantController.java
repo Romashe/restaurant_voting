@@ -1,5 +1,7 @@
 package ru.shr.restaurant_voting.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -51,7 +53,10 @@ public class UserRestaurantController {
     UserRepository userRepository;
 
     @GetMapping()
-    public List<RestaurantTo> getAll(@RequestParam(required = false, defaultValue = "#{T(java.time.LocalDate).now()}")
+    @Operation(summary = "Main operation for get restaurants, it's menu and vote count by Requested Date",
+            description = "Only restaurants that have a menu for the Requested Date are displayed")
+    public List<RestaurantTo> getAll(@Parameter(description = "Default Value = Today")
+                                     @RequestParam(required = false, defaultValue = "#{T(java.time.LocalDate).now()}")
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate menuDate) {
         log.info("getAllRestaurantWithMenu for MenuDate {}", menuDate);
         return RestaurantUtil.convertListTo(restaurantRepository.getAllWithMenu(menuDate), menuDate);
@@ -73,6 +78,7 @@ public class UserRestaurantController {
 
     @GetMapping("/{id}/votes")
     public List<VoteTo> getRestaurantVotes(@PathVariable int id,
+                                           @Parameter(description = "Default Value = Today")
                                            @RequestParam(required = false, defaultValue = "#{T(java.time.LocalDate).now()}")
                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate voteDate) {
         log.info("get Restaurant with id={}, Vote for date {}", id, voteDate);
@@ -80,6 +86,7 @@ public class UserRestaurantController {
     }
 
     @PostMapping(value = "/{id}/votes", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "You can vote right here", description = "Voting is only possible for today's date")
     public ResponseEntity<Vote> createVote(@Valid @RequestBody Vote vote,
                                            @AuthenticationPrincipal AuthUser authUser,
                                            @PathVariable int id) {
