@@ -28,7 +28,6 @@ VALUES ('Sibas', 100.25, CURRENT_DATE(), 1),
        ('ShavermaOld', 10.05, CURRENT_DATE() - 1, 3);
 
 INSERT INTO VOTE (USER_ID, RESTAURANT_ID, VOTE_DATE)
-VALUES (1, 1, CURRENT_DATE()),
-       (1, 1, CURRENT_DATE()-1),
+VALUES (1, 1, CURRENT_DATE()-1),
        (2, 1, CURRENT_DATE()),
        (2, 2, CURRENT_DATE()-1);

@@ -28,8 +28,8 @@ public class UserTestData {
     public static final User admin = new User(ADMIN_ID, "Admin", ADMIN_MAIL, "admin", Role.ADMIN, Role.USER);
     public static final Restaurant restaurant1 = new Restaurant(1, "Sahalin");
     public static final Restaurant restaurant2 = new Restaurant(2, "Metropol");
-    public static final List<Vote> adminTodayVotes = List.of(new Vote(3, LocalDate.now(), restaurant1), new Vote(4, LocalDate.now(), restaurant2));
-    public static final List<Vote> adminYesterdayVotes = List.of(new Vote(5, LocalDate.now().minusDays(1), restaurant2));
+    public static final List<Vote> adminTodayVotes = List.of(new Vote(2, LocalDate.now(), restaurant1), new Vote(3, LocalDate.now(), restaurant2));
+    public static final List<Vote> adminYesterdayVotes = List.of(new Vote(4, LocalDate.now().minusDays(1), restaurant2));
 
 
     public static User getNew() {

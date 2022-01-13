@@ -2,7 +2,6 @@ package ru.shr.restaurant_voting.web;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.shr.restaurant_voting.error.IllegalRequestDataException;
 import ru.shr.restaurant_voting.model.MenuItem;
 import ru.shr.restaurant_voting.model.Restaurant;
+import ru.shr.restaurant_voting.model.User;
 import ru.shr.restaurant_voting.model.Vote;
 import ru.shr.restaurant_voting.repository.MenuItemRepository;
 import ru.shr.restaurant_voting.repository.RestaurantRepository;
@@ -37,14 +37,21 @@ import static ru.shr.restaurant_voting.web.UserRestaurantController.REST_URL;
 @RestController
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-@RequiredArgsConstructor
 public class UserRestaurantController {
 
     public static final String REST_URL = "/api/restaurants";
-    final RestaurantRepository restaurantRepository;
-    final VoteRepository voteRepository;
-    final MenuItemRepository menuItemRepository;
-    final UserRepository userRepository;
+
+    @Autowired
+    RestaurantRepository restaurantRepository;
+
+    @Autowired
+    VoteRepository voteRepository;
+
+    @Autowired
+    MenuItemRepository menuItemRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @GetMapping()
     @Operation(summary = "Main operation for get restaurants, it's menu and vote count by Requested Date",
@@ -81,14 +88,14 @@ public class UserRestaurantController {
 
     @PostMapping(value = "/{id}/votes", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "You can vote right here", description = "Voting is only possible for today's date")
-    public ResponseEntity<Vote> createVote(@Valid @RequestBody Vote vote,
+    public ResponseEntity<Vote> createVote(@Valid @RequestBody VoteTo voteTo,
                                            @AuthenticationPrincipal AuthUser authUser,
                                            @PathVariable int id) {
-        if (!vote.getVoteDate().isEqual(LocalDate.now())) {
+        if (!voteTo.getVoteDate().isEqual(LocalDate.now())) {
             throw (new IllegalRequestDataException("You can't vote for past or future"));
         }
 
-        Vote pastVote = voteRepository.findByUserIdAndVoteDate(authUser.id(), vote.getVoteDate());
+        Vote pastVote = voteRepository.findByUserIdAndVoteDate(authUser.id(), voteTo.getVoteDate());
         if (pastVote != null) {
             LocalDateTime today = LocalDateTime.now();
             LocalDateTime deadlineTime = LocalDateTime.parse(LocalDate.now() + "T11:00:00");
@@ -101,10 +108,11 @@ public class UserRestaurantController {
             }
         }
 
+        Restaurant votedRestaurant = restaurantRepository.findById(id).orElseThrow(() -> new IllegalRequestDataException("Restaurant not found"));
+        User user = userRepository.findById(authUser.id()).orElseThrow(() -> new IllegalRequestDataException("User not found"));
+        Vote vote = new Vote(voteTo.getVoteDate(), votedRestaurant, user);
         log.info("create {}", vote);
         checkNew(vote);
-        vote.setUser(userRepository.getById(authUser.id()));
-        vote.setRestaurant(restaurantRepository.getById(id));
         Vote created = voteRepository.save(vote);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(ProfileController.REST_URL + "/votes/{id}")

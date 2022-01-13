@@ -31,7 +31,17 @@ public class MenuItem extends NamedEntity implements HasId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
-//    @JsonBackReference
     @JsonIgnore
     private Restaurant restaurant;
+
+    @Override
+    public String toString() {
+        return "MenuItem{" +
+                "id=" + id +
+                ", price=" + price +
+                ", itemDate=" + itemDate +
+                ", restaurant=" + restaurant +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

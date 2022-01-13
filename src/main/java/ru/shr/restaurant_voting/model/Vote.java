@@ -30,11 +30,26 @@ public class Vote extends BaseEntity implements HasId {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "restaurant_id")
-//    @JsonIgnore
     private Restaurant restaurant;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
+
+    public Vote(LocalDate voteDate, Restaurant restaurant, User user) {
+        this.voteDate = voteDate;
+        this.restaurant = restaurant;
+        this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Vote{" +
+                "id=" + id +
+                ", voteDate=" + voteDate +
+                ", restaurant=" + restaurant +
+                ", user=" + user +
+                '}';
+    }
 }
