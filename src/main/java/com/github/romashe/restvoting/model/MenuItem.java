@@ -24,7 +24,7 @@ public class MenuItem extends NamedEntity {
 
     @Column(name = "price", nullable = false)
     @NotNull
-    private BigDecimal price;
+    private int price;
 
     @Column(name = "item_date", nullable = false)
     @NotNull
@@ -35,7 +35,7 @@ public class MenuItem extends NamedEntity {
     @JsonIgnore
     private Restaurant restaurant;
 
-    public MenuItem(Integer id, String name, BigDecimal price, LocalDate itemDate) {
+    public MenuItem(Integer id, String name, int price, LocalDate itemDate) {
         super(id, name);
         this.price = price;
         this.itemDate = itemDate;
