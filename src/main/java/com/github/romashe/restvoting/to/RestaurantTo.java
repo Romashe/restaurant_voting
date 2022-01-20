@@ -5,17 +5,11 @@ import com.github.romashe.restvoting.model.MenuItem;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.Set;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class RestaurantTo extends NamedTo {
-
-    @NotNull
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    LocalDate requestedDate;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     long voteCount;
@@ -23,9 +17,8 @@ public class RestaurantTo extends NamedTo {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Set<MenuItem> menuItems;
 
-    public RestaurantTo(Integer id, String name, Set<MenuItem> menuItems, LocalDate requestedDate, long voteCount) {
+    public RestaurantTo(Integer id, String name, Set<MenuItem> menuItems, long voteCount) {
         super(id, name);
-        this.requestedDate = requestedDate;
         this.voteCount = voteCount;
         this.menuItems = menuItems;
     }

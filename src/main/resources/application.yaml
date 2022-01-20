@@ -10,6 +10,8 @@ spring:
     properties:
       #  http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html#configurations
       hibernate:
+        generate_statistics: true
+        use_sql_comments: true
         format_sql: true
         default_batch_fetch_size: 20
         # https://stackoverflow.com/questions/21257819/what-is-the-difference-between-hibernate-jdbc-fetch-size-and-hibernate-jdbc-batc
@@ -36,7 +38,10 @@ spring:
 logging:
   level:
     root: WARN
-    ru.shr.restaurant_voting: DEBUG
+#    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: DEBUG
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
+#    org.hibernate.type.descriptor.sql: TRACE
+    com.github.romashe.restvoting: DEBUG
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
 
 server.servlet:

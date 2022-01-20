@@ -29,6 +29,12 @@ public class ValidationUtil {
         }
     }
 
+    public static void checkModificationWithChild(int count, int id, int childId) {
+        if (count == 0) {
+            throw new IllegalRequestDataException("Entity with parent id=" + id + " and child id=" + childId + " not found");
+        }
+    }
+
     //  https://stackoverflow.com/a/65442410/548473
     @NonNull
     public static Throwable getRootCause(@NonNull Throwable t) {

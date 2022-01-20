@@ -37,14 +37,14 @@ public class RestaurantTestData {
     public static final Set<MenuItem> menuRest3 = Set.of(rest3MenuItem1, rest3MenuItem2);
 
     public static final List<Restaurant> restaurant1List = List.of(restaurant1);
-    public static final List<VoteTo> todayVotesToForRestaurant1 = List.of(new VoteTo(2, "Admin", LocalDate.now()));
-    public static final List<VoteTo> yesterdayVotesToForRestaurant1 = List.of(new VoteTo(1, "User", LocalDate.now().minusDays(1)));
+    public static final List<VoteTo> todayVotesToForRestaurant1 = List.of(new VoteTo(2, restaurant1.id()));
+    public static final List<VoteTo> yesterdayVotesToForRestaurant1 = List.of(new VoteTo(1, restaurant1.id()));
 
-    public static List<RestaurantTo> getRestaurantToForToday() {
+   /* public static List<RestaurantTo> getRestaurantToForToday() {
         restaurant1.setMenuItems(menuRest1);
         restaurant1.setVotes(votesRest1);
         restaurant2.setMenuItems(menuRest2);
         restaurant3.setMenuItems(menuRest3);
-        return RestaurantUtil.convertListTo(List.of(restaurant1, restaurant2, restaurant3), LocalDate.now());
-    }
+        return RestaurantUtil.convertListTo(List.of(restaurant1, restaurant2, restaurant3));
+    }*/
 }

@@ -1,6 +1,7 @@
 package com.github.romashe.restvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,9 +21,8 @@ import java.util.Set;
 public class Restaurant extends NamedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
-    @OrderBy("itemDate DESC")
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
-    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Set<MenuItem> menuItems;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")

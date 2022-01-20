@@ -28,7 +28,11 @@ public class Vote extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @NotNull
+    @JsonIgnore
     private Restaurant restaurant;
+
+    @Column(name = "restaurant_id", updatable = false, insertable = false)
+    private int restaurantId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -53,8 +57,7 @@ public class Vote extends BaseEntity {
         return "Vote{" +
                 "id=" + id +
                 ", voteDate=" + voteDate +
-                ", restaurant=" + restaurant +
-                ", user=" + user +
+                ", restaurantId=" + restaurantId +
                 '}';
     }
 }

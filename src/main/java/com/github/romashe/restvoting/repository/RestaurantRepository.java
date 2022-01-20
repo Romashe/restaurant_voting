@@ -1,19 +1,16 @@
 package com.github.romashe.restvoting.repository;
 
 import com.github.romashe.restvoting.model.Restaurant;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Transactional(readOnly = true)
-@Tag(name = "Restaurant Controller")
 public interface RestaurantRepository extends BaseRepository<Restaurant> {
 
-    @EntityGraph(attributePaths = {"menuItems", "votes"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT r FROM Restaurant r left outer join r.menuItems m left outer join r.votes v WHERE m.itemDate = :menuDate")
-    List<Restaurant> getAllWithMenu(LocalDate menuDate);
+    @EntityGraph(attributePaths = {"menuItems"}, type = EntityGraph.EntityGraphType.LOAD)
+    @Query("SELECT r FROM Restaurant r inner join r.menuItems m WHERE m.itemDate = CURRENT_DATE ORDER BY m.name asc")
+    List<Restaurant> getAllWithMenu();
 }

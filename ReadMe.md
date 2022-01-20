@@ -19,8 +19,8 @@ System for deciding where to have lunch.
   * run `target/restaurant_voting-1.0.jar`
 
 ## Test users
-- Admin: admin@mail.com
-- User: user@mail.com
+- Admin: admin@mail.com / admin
+- User: user@mail.com / password
 
 ## Swagger URL
 http://localhost/swagger-ui
