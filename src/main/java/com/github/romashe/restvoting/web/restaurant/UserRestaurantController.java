@@ -7,6 +7,8 @@ import com.github.romashe.restvoting.util.JsonViews;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import static com.github.romashe.restvoting.web.restaurant.UserRestaurantControl
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "restaurants")
 public class UserRestaurantController {
 
     public static final String REST_URL = "/api/restaurants";
@@ -31,6 +34,7 @@ public class UserRestaurantController {
     @JsonView(JsonViews.Public.class)
     @GetMapping
     @Operation(summary = "Get All restaurants")
+    @Cacheable
     public List<Restaurant> getAllRestaurant() {
         log.info("getAllRestaurants");
         return restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
@@ -38,6 +42,7 @@ public class UserRestaurantController {
 
     @JsonView(JsonViews.Public.class)
     @GetMapping("/{id}")
+    @Cacheable
     public ResponseEntity<Restaurant> getById(@PathVariable int id) {
         log.info("get Restaurant {}", id);
         return ResponseEntity.of(restaurantRepository.findById(id));

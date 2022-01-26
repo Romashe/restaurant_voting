@@ -9,6 +9,8 @@ import com.github.romashe.restvoting.util.JsonViews;
 import com.github.romashe.restvoting.util.validation.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +31,7 @@ import static com.github.romashe.restvoting.web.restaurant.AdminRestaurantContro
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "restaurants")
 public class AdminMenuItemController {
     final private RestaurantRepository restaurantRepository;
     final private MenuItemRepository menuItemRepository;
@@ -58,6 +61,7 @@ public class AdminMenuItemController {
 
     @DeleteMapping("/{id}/menu-items/{menuItemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(allEntries = true)
     public void delete(@PathVariable int id, @PathVariable int menuItemId) {
         log.info("delete Menu with id={} for Restaurant with id={} ", id, menuItemId);
         menuItemRepository.deleteExistedMenuItemByRestIdAndItemIdWithCheck(id, menuItemId);
@@ -66,6 +70,7 @@ public class AdminMenuItemController {
     @JsonView(JsonViews.Public.class)
     @PostMapping(value = "/{id}/menu-items/", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
+    @CacheEvict(allEntries = true)
     public ResponseEntity<MenuItem> createMenuItem(@Valid @RequestBody MenuItem menuItem, @PathVariable int id) {
         log.info("create {}", menuItem);
         ValidationUtil.checkNew(menuItem);
@@ -81,6 +86,7 @@ public class AdminMenuItemController {
     @PutMapping(value = "/{id}/menu-items/{menuItemId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(allEntries = true)
     public void updateMenuItem(@Valid @RequestBody MenuItem menuItem,
                                @PathVariable int id, @PathVariable int menuItemId) {
         log.info("update MenuItem with id={} for Restaurant with id={}", menuItem, id);

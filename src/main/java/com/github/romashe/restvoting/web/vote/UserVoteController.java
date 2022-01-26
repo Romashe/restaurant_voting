@@ -11,6 +11,9 @@ import com.github.romashe.restvoting.web.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,12 +37,14 @@ import static com.github.romashe.restvoting.web.vote.UserVoteController.REST_URL
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "restaurants")
 public class UserVoteController {
     public static final String REST_URL = "/api/votes";
     final private RestaurantRepository restaurantRepository;
     final private VoteRepository voteRepository;
 
     @GetMapping()
+    @Cacheable
     @Operation(summary = "Get all current user votes")
     public List<Vote> getAllUserVotes(@AuthenticationPrincipal AuthUser authUser) {
         log.info("getAllUserVotes");
@@ -47,6 +52,7 @@ public class UserVoteController {
     }
 
     @GetMapping("/by-date")
+    @Cacheable
     @Operation(summary = "Get current user vote by voteDate")
     public ResponseEntity<Vote> getUserVoteByDate(@AuthenticationPrincipal AuthUser authUser,
                                                   @RequestParam
@@ -56,6 +62,7 @@ public class UserVoteController {
     }
 
     @GetMapping("/{id}")
+    @Cacheable
     @Operation(summary = "Get current user vote by Id")
     public ResponseEntity<Vote> getUserVoteById(@AuthenticationPrincipal AuthUser authUser,
                                                 @PathVariable int id) {
@@ -65,6 +72,7 @@ public class UserVoteController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
+    @CacheEvict(allEntries = true)
     @Operation(summary = "You can vote right here", description = "Voting is only possible for today's date")
     public ResponseEntity<Vote> createVote(@Valid @RequestBody VoteTo voteTo,
                                            @AuthenticationPrincipal AuthUser authUser) {
@@ -86,6 +94,7 @@ public class UserVoteController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(allEntries = true)
     @Operation(summary = "You can change your vote right here", description = "Vote can't be changed after 11:00")
     public void updateVote(@Valid @RequestBody VoteTo voteTo, @AuthenticationPrincipal AuthUser authUser) {
         log.info("update Vote {}", voteTo);

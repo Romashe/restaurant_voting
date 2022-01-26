@@ -12,6 +12,8 @@ import com.github.romashe.restvoting.util.RestaurantUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,12 +30,14 @@ import static com.github.romashe.restvoting.web.restaurant.UserRestaurantControl
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "restaurants")
 public class UserMenuItemController {
     final private MenuItemRepository menuItemRepository;
     final private RestaurantRepository restaurantRepository;
     final private VoteRepository voteRepository;
 
     @GetMapping("/menu-items")
+    @Cacheable
     @Operation(summary = "Get Restaurants and it's Menu-items for Today")
     public List<Restaurant> getAllRestaurantWithMenuByToday() {
         log.info("getAllRestaurantWithMenuByToday for MenuDate {}", LocalDate.now());
@@ -42,6 +46,7 @@ public class UserMenuItemController {
 
     @GetMapping("/ratings")
     @Transactional
+    @Cacheable
     @Operation(summary = "Get Restaurants, Vote count and it's Menu-items for Today")
     public List<RestaurantTo> getAllRestaurantWithMenuByTodayWithRating() {
         log.info("getAllRestaurantWithMenuByTodayWithRating for MenuDate {}", LocalDate.now());
@@ -50,6 +55,7 @@ public class UserMenuItemController {
 
     @JsonView(JsonViews.Public.class)
     @GetMapping("/{id}/menu-items")
+    @Cacheable
     @Operation(summary = "Get Menu-items by RestaurantId for Today")
     public List<MenuItem> getRestaurantMenu(@PathVariable int id) {
         log.info("get Restaurant with id={}, Menu for date {}", id, LocalDate.now());
