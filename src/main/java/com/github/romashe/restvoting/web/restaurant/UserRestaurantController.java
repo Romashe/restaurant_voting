@@ -1,7 +1,9 @@
 package com.github.romashe.restvoting.web.restaurant;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.github.romashe.restvoting.model.Restaurant;
 import com.github.romashe.restvoting.repository.RestaurantRepository;
+import com.github.romashe.restvoting.util.JsonViews;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ public class UserRestaurantController {
     public static final String REST_URL = "/api/restaurants";
     final private RestaurantRepository restaurantRepository;
 
+    @JsonView(JsonViews.Public.class)
     @GetMapping
     @Operation(summary = "Get All restaurants")
     public List<Restaurant> getAllRestaurant() {
@@ -33,6 +36,7 @@ public class UserRestaurantController {
         return restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
+    @JsonView(JsonViews.Public.class)
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> getById(@PathVariable int id) {
         log.info("get Restaurant {}", id);

@@ -8,6 +8,8 @@ import org.springframework.lang.NonNull;
 
 @UtilityClass
 public class ValidationUtil {
+    public static final String DEADLINE_TIME = "T11:00:00";
+
     public static void checkNew(HasId bean) {
         if (!bean.isNew()) {
             throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must be new (id=null)");
@@ -31,7 +33,8 @@ public class ValidationUtil {
 
     public static void checkModificationWithChild(int count, int id, int childId) {
         if (count == 0) {
-            throw new IllegalRequestDataException("Entity with parent id=" + id + " and child id=" + childId + " not found");
+            throw new IllegalRequestDataException("Entity with parent id=" + id + "" +
+                    " and child id=" + childId + " not found");
         }
     }
 

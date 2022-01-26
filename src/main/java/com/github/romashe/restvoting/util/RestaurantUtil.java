@@ -9,7 +9,6 @@ import java.util.Map;
 
 @UtilityClass
 public class RestaurantUtil {
-
     public static List<RestaurantTo> convertListTo(List<Restaurant> restaurants, Map<Integer, Long> restaurantVoteCnt) {
         return restaurants.stream()
                 .map(rest -> createTo(rest, restaurantVoteCnt.getOrDefault(rest.getId(), 0L)))

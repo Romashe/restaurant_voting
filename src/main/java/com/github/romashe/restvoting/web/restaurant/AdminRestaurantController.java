@@ -1,8 +1,9 @@
 package com.github.romashe.restvoting.web.restaurant;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.github.romashe.restvoting.model.Restaurant;
-import com.github.romashe.restvoting.repository.MenuItemRepository;
 import com.github.romashe.restvoting.repository.RestaurantRepository;
+import com.github.romashe.restvoting.util.JsonViews;
 import com.github.romashe.restvoting.util.validation.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class AdminRestaurantController {
 
     public static final String REST_URL = "/api/admin/restaurants";
     final private RestaurantRepository restaurantRepository;
-    final private MenuItemRepository menuItemRepository;
+
 
     @GetMapping
     public List<Restaurant> getAll() {
@@ -35,6 +36,7 @@ public class AdminRestaurantController {
         return restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
+    @JsonView(JsonViews.Public.class)
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> get(@PathVariable int id) {
         log.info("get Restaurant {}", id);
@@ -48,6 +50,7 @@ public class AdminRestaurantController {
         restaurantRepository.deleteExisted(id);
     }
 
+    @JsonView(JsonViews.Public.class)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
@@ -59,6 +62,7 @@ public class AdminRestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @JsonView(JsonViews.Public.class)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {

@@ -38,11 +38,11 @@ spring:
 logging:
   level:
     root: WARN
-#    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: DEBUG
     org.springframework.orm.jpa.JpaTransactionManager: DEBUG
-#    org.hibernate.type.descriptor.sql: TRACE
     com.github.romashe.restvoting: DEBUG
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
+    #    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: DEBUG
+    #    org.hibernate.type.descriptor.sql: TRACE
 
 server.servlet:
   encoding:

@@ -15,8 +15,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDate;
-
 import static com.github.romashe.restvoting.user.UserTestData.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -111,23 +109,5 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(containsString(UniqueMailValidator.EXCEPTION_DUPLICATE_EMAIL)));
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_MAIL)
-    void getAdminTodayVotes() throws Exception {
-        perform(MockMvcRequestBuilders.get(ProfileController.REST_URL + "/votes"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(ADMIN_VOTE_MATCHER.contentJson(adminTodayVotes));
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_MAIL)
-    void getAdminYesterdayVotes() throws Exception {
-        perform(MockMvcRequestBuilders.get(ProfileController.REST_URL + "/votes?voteDate=" + LocalDate.now().minusDays(1)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(ADMIN_VOTE_MATCHER.contentJson(adminYesterdayVotes));
     }
 }

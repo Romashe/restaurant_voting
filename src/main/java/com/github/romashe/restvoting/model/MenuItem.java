@@ -1,6 +1,8 @@
 package com.github.romashe.restvoting.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.github.romashe.restvoting.util.JsonViews;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +10,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonView(JsonViews.Public.class)
 public class MenuItem extends NamedEntity {
 
     @Column(name = "price", nullable = false)
@@ -32,7 +34,8 @@ public class MenuItem extends NamedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
-    @JsonIgnore
+    @JsonView(JsonViews.Internal.class)
+    @JsonBackReference
     private Restaurant restaurant;
 
     public MenuItem(Integer id, String name, int price, LocalDate itemDate) {

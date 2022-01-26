@@ -1,11 +1,13 @@
 package com.github.romashe.restvoting.web.menuitem;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.github.romashe.restvoting.model.MenuItem;
 import com.github.romashe.restvoting.model.Restaurant;
 import com.github.romashe.restvoting.repository.MenuItemRepository;
 import com.github.romashe.restvoting.repository.RestaurantRepository;
 import com.github.romashe.restvoting.repository.VoteRepository;
 import com.github.romashe.restvoting.to.RestaurantTo;
+import com.github.romashe.restvoting.util.JsonViews;
 import com.github.romashe.restvoting.util.RestaurantUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +43,12 @@ public class UserMenuItemController {
     @GetMapping("/ratings")
     @Transactional
     @Operation(summary = "Get Restaurants, Vote count and it's Menu-items for Today")
-    public List<RestaurantTo> getAllRestaurantWithMenuByTodayWithRaiting() {
-        log.info("getAllRestaurantWithMenuByTodayWithRaiting for MenuDate {}", LocalDate.now());
+    public List<RestaurantTo> getAllRestaurantWithMenuByTodayWithRating() {
+        log.info("getAllRestaurantWithMenuByTodayWithRating for MenuDate {}", LocalDate.now());
         return RestaurantUtil.convertListTo(restaurantRepository.getAllWithMenu(), voteRepository.findAllTodayVotes());
     }
 
+    @JsonView(JsonViews.Public.class)
     @GetMapping("/{id}/menu-items")
     @Operation(summary = "Get Menu-items by RestaurantId for Today")
     public List<MenuItem> getRestaurantMenu(@PathVariable int id) {

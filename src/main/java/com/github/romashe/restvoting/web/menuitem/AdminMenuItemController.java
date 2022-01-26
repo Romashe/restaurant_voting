@@ -1,9 +1,11 @@
 package com.github.romashe.restvoting.web.menuitem;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.github.romashe.restvoting.error.IllegalRequestDataException;
 import com.github.romashe.restvoting.model.MenuItem;
 import com.github.romashe.restvoting.repository.MenuItemRepository;
 import com.github.romashe.restvoting.repository.RestaurantRepository;
+import com.github.romashe.restvoting.util.JsonViews;
 import com.github.romashe.restvoting.util.validation.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +33,14 @@ public class AdminMenuItemController {
     final private RestaurantRepository restaurantRepository;
     final private MenuItemRepository menuItemRepository;
 
+    @JsonView(JsonViews.Public.class)
     @GetMapping("/{id}/menu-items")
     public List<MenuItem> getRestaurantMenu(@PathVariable int id) {
         log.info("get Restaurant with id={} All Menu ", id);
         return menuItemRepository.findByRestaurantId(id);
     }
 
+    @JsonView(JsonViews.Public.class)
     @GetMapping("/{id}/menu-items/by-date")
     public List<MenuItem> getRestaurantMenuByDate(@PathVariable int id,
                                                   @RequestParam
@@ -45,6 +49,7 @@ public class AdminMenuItemController {
         return menuItemRepository.findByRestaurantIdFilteredByItemDate(id, menuDate);
     }
 
+    @JsonView(JsonViews.Public.class)
     @GetMapping("/{id}/menu-items/{menuItemId}")
     public ResponseEntity<MenuItem> getRestaurantMenuById(@PathVariable int id, @PathVariable int menuItemId) {
         log.info("get Restaurant with id={} Menu with id={}", id, menuItemId);
@@ -58,6 +63,7 @@ public class AdminMenuItemController {
         menuItemRepository.deleteExistedMenuItemByRestIdAndItemIdWithCheck(id, menuItemId);
     }
 
+    @JsonView(JsonViews.Public.class)
     @PostMapping(value = "/{id}/menu-items/", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ResponseEntity<MenuItem> createMenuItem(@Valid @RequestBody MenuItem menuItem, @PathVariable int id) {
@@ -66,11 +72,12 @@ public class AdminMenuItemController {
         menuItem.setRestaurant(restaurantRepository.getById(id));
         MenuItem created = menuItemRepository.save(menuItem);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}/menu-items/{id}")
-                .buildAndExpand(created.getId()).toUri();
+                .path(REST_URL + "/{id}/menu-items/{menuItemId}")
+                .buildAndExpand(id, created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @JsonView(JsonViews.Public.class)
     @PutMapping(value = "/{id}/menu-items/{menuItemId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)

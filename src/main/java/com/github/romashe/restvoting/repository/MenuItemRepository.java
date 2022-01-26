@@ -28,6 +28,7 @@ public interface MenuItemRepository extends BaseRepository<MenuItem> {
     int deleteExistedMenuItemByRestIdAndItemId(int id, int menuItemId);
 
     default void deleteExistedMenuItemByRestIdAndItemIdWithCheck(int id, int menuItemId) {
-        ValidationUtil.checkModificationWithChild(deleteExistedMenuItemByRestIdAndItemId(id, menuItemId), id, menuItemId);
+        ValidationUtil.checkModificationWithChild(
+                deleteExistedMenuItemByRestIdAndItemId(id, menuItemId), id, menuItemId);
     }
 }

@@ -4,7 +4,6 @@ import com.github.romashe.restvoting.error.IllegalRequestDataException;
 import com.github.romashe.restvoting.model.Restaurant;
 import com.github.romashe.restvoting.model.Vote;
 import com.github.romashe.restvoting.repository.RestaurantRepository;
-import com.github.romashe.restvoting.repository.UserRepository;
 import com.github.romashe.restvoting.repository.VoteRepository;
 import com.github.romashe.restvoting.to.VoteTo;
 import com.github.romashe.restvoting.util.validation.ValidationUtil;
@@ -28,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.romashe.restvoting.util.validation.ValidationUtil.DEADLINE_TIME;
 import static com.github.romashe.restvoting.web.vote.UserVoteController.REST_URL;
 
 @RestController
@@ -38,8 +38,6 @@ public class UserVoteController {
     public static final String REST_URL = "/api/votes";
     final private RestaurantRepository restaurantRepository;
     final private VoteRepository voteRepository;
-    final private UserRepository userRepository;
-    final private String DEADLINE_TIME = "T11:00:00";
 
     @GetMapping()
     @Operation(summary = "Get all current user votes")
@@ -60,7 +58,7 @@ public class UserVoteController {
     @GetMapping("/{id}")
     @Operation(summary = "Get current user vote by Id")
     public ResponseEntity<Vote> getUserVoteById(@AuthenticationPrincipal AuthUser authUser,
-                                                @RequestParam int id) {
+                                                @PathVariable int id) {
         log.info("getUserVoteById {}", id);
         return ResponseEntity.of(voteRepository.findByUserIdAndVoteId(authUser.id(), id));
     }
@@ -94,7 +92,8 @@ public class UserVoteController {
         Optional<Vote> pastVote = voteRepository.findByUserIdAndVoteDate(authUser.id(), LocalDate.now());
         if (pastVote.isPresent()) {
             if (LocalDateTime.now().isAfter(LocalDateTime.parse(LocalDate.now() + DEADLINE_TIME))) {
-                throw (new IllegalRequestDataException("You have voted today already. Vote can't be changed after " + DEADLINE_TIME));
+                throw (new IllegalRequestDataException(
+                        "You have voted today already. Vote can't be changed after " + DEADLINE_TIME));
             } else {
                 Restaurant votedRestaurant = restaurantRepository.getById(voteTo.getRestaurantId());
                 Vote updatedVote = pastVote.get();
