@@ -9,11 +9,12 @@ import com.github.romashe.restvoting.to.VoteTo;
 import com.github.romashe.restvoting.util.validation.ValidationUtil;
 import com.github.romashe.restvoting.web.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,32 +38,30 @@ import static com.github.romashe.restvoting.web.vote.UserVoteController.REST_URL
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "restaurants")
+@CacheConfig(cacheNames = "ratings")
 public class UserVoteController {
     public static final String REST_URL = "/api/votes";
     final private RestaurantRepository restaurantRepository;
     final private VoteRepository voteRepository;
 
     @GetMapping()
-    @Cacheable
-    @Operation(summary = "Get all current user votes")
+    @Operation(summary = "Get user all votes")
     public List<Vote> getAllUserVotes(@AuthenticationPrincipal AuthUser authUser) {
         log.info("getAllUserVotes");
         return voteRepository.findAllByUserId(authUser.id());
     }
 
     @GetMapping("/by-date")
-    @Cacheable
     @Operation(summary = "Get current user vote by voteDate")
     public ResponseEntity<Vote> getUserVoteByDate(@AuthenticationPrincipal AuthUser authUser,
-                                                  @RequestParam
+                                                  @Parameter(description = "Default Value = Today")
+                                                  @RequestParam(defaultValue = "#{T(java.time.LocalDate).now()}")
                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate voteDate) {
         log.info("getUserVoteByDate {}", voteDate);
         return ResponseEntity.of(voteRepository.findByUserIdAndVoteDate(authUser.id(), voteDate));
     }
 
     @GetMapping("/{id}")
-    @Cacheable
     @Operation(summary = "Get current user vote by Id")
     public ResponseEntity<Vote> getUserVoteById(@AuthenticationPrincipal AuthUser authUser,
                                                 @PathVariable int id) {
@@ -72,7 +71,7 @@ public class UserVoteController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    @CacheEvict(allEntries = true)
+    @CachePut(value = "ratings")
     @Operation(summary = "You can vote right here", description = "Voting is only possible for today's date")
     public ResponseEntity<Vote> createVote(@Valid @RequestBody VoteTo voteTo,
                                            @AuthenticationPrincipal AuthUser authUser) {
@@ -94,13 +93,13 @@ public class UserVoteController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(allEntries = true)
+    @CacheEvict(value = "ratings", allEntries = true)
     @Operation(summary = "You can change your vote right here", description = "Vote can't be changed after 11:00")
     public void updateVote(@Valid @RequestBody VoteTo voteTo, @AuthenticationPrincipal AuthUser authUser) {
         log.info("update Vote {}", voteTo);
         Optional<Vote> pastVote = voteRepository.findByUserIdAndVoteDate(authUser.id(), LocalDate.now());
         if (pastVote.isPresent()) {
-            if (LocalDateTime.now().isAfter(LocalDateTime.parse(LocalDate.now() + DEADLINE_TIME))) {
+            if (LocalDateTime.now().isAfter(LocalDateTime.of(LocalDate.now(), DEADLINE_TIME))) {
                 throw (new IllegalRequestDataException(
                         "You have voted today already. Vote can't be changed after " + DEADLINE_TIME));
             } else {

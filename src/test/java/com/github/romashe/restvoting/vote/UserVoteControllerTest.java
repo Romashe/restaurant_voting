@@ -102,7 +102,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updVoteTo)))
                 .andDo(print());
 
-        if (LocalDateTime.now().isAfter(LocalDateTime.parse(LocalDate.now() + DEADLINE_TIME))) {
+        if (LocalDateTime.now().isAfter(LocalDateTime.of(LocalDate.now(), DEADLINE_TIME))) {
             action.andExpect(status().isUnprocessableEntity());
         } else {
             action.andExpect(status().isNoContent());

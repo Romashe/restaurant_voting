@@ -6,9 +6,11 @@ import lombok.experimental.UtilityClass;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
 
+import java.time.LocalTime;
+
 @UtilityClass
 public class ValidationUtil {
-    public static final String DEADLINE_TIME = "T11:00:00";
+    public static final LocalTime DEADLINE_TIME = LocalTime.of(11, 0);
 
     public static void checkNew(HasId bean) {
         if (!bean.isNew()) {

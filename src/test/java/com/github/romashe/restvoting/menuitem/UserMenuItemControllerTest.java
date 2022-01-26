@@ -1,36 +1,21 @@
 package com.github.romashe.restvoting.menuitem;
 
 import com.github.romashe.restvoting.AbstractControllerTest;
-import com.github.romashe.restvoting.model.Restaurant;
-import com.github.romashe.restvoting.repository.VoteRepository;
-import com.github.romashe.restvoting.restaurant.RestaurantTestData;
-import com.github.romashe.restvoting.to.RestaurantTo;
-import com.github.romashe.restvoting.util.JsonUtil;
-import com.github.romashe.restvoting.util.RestaurantUtil;
 import com.github.romashe.restvoting.web.restaurant.UserRestaurantController;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.List;
 
 import static com.github.romashe.restvoting.menuitem.MenuItemTestData.MENUITEMS_MATCHER;
 import static com.github.romashe.restvoting.menuitem.MenuItemTestData.rest2TodayMenuItemsList;
 import static com.github.romashe.restvoting.restaurant.RestaurantTestData.restaurant2;
 import static com.github.romashe.restvoting.user.UserTestData.USER_MAIL;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserMenuItemControllerTest extends AbstractControllerTest {
     private static final String REST_URL = UserRestaurantController.REST_URL + '/';
-
-    @Autowired
-    private VoteRepository voteRepository;
 
     @Test
     void getUnAuth() throws Exception {
@@ -45,35 +30,5 @@ class UserMenuItemControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MENUITEMS_MATCHER.contentJson(rest2TodayMenuItemsList));
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getAllRestaurantWithMenuByToday() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL + "/menu-items"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        List<Restaurant> actual = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), Restaurant.class);
-        assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("votes", "menuItems.restaurant")
-                .isEqualTo(RestaurantTestData.getRestaurantsWithMenuToday());
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getAllRestaurantWithMenuByTodayWithRating() throws Exception {
-        ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL + "/ratings"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        List<RestaurantTo> actual = JsonUtil.readValues(action.andReturn().getResponse().getContentAsString(), RestaurantTo.class);
-        List<RestaurantTo> expected = RestaurantUtil.convertListTo(
-                RestaurantTestData.getRestaurantsWithMenuToday(), voteRepository.findAllTodayVotes());
-        assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("menuItems.restaurant")
-                .isEqualTo(expected);
     }
 }

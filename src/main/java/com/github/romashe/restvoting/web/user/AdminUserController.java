@@ -5,6 +5,7 @@ import com.github.romashe.restvoting.util.validation.ValidationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,8 +46,8 @@ public class AdminUserController extends AbstractUserController {
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name", "email"));
     }
 
-    @CacheEvict(allEntries = true)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @CachePut
     public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
         log.info("create {}", user);
         ValidationUtil.checkNew(user);
@@ -57,9 +58,9 @@ public class AdminUserController extends AbstractUserController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @CacheEvict(allEntries = true)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict("key=#userTo.email")
     public void update(@Valid @RequestBody User user, @PathVariable int id) {
         log.info("update {} with id={}", user, id);
         ValidationUtil.assureIdConsistent(user, id);
@@ -75,6 +76,7 @@ public class AdminUserController extends AbstractUserController {
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict
     public void enable(@PathVariable int id, @RequestParam boolean enabled) {
         log.info(enabled ? "enable {}" : "disable {}", id);
         User user = repository.getById(id);

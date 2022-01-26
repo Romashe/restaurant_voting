@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,14 +28,14 @@ import static com.github.romashe.restvoting.web.restaurant.AdminRestaurantContro
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "restaurants")
+@CacheConfig(cacheNames = {"ratings", "restMenuItems"})
 public class AdminRestaurantController {
 
     public static final String REST_URL = "/api/admin/restaurants";
     final private RestaurantRepository restaurantRepository;
 
-
     @GetMapping
+    @Cacheable
     public List<Restaurant> getAll() {
         log.info("getAllRestaurant");
         return restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
@@ -56,7 +58,7 @@ public class AdminRestaurantController {
 
     @JsonView(JsonViews.Public.class)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(allEntries = true)
+    @CachePut
     public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
         ValidationUtil.checkNew(restaurant);
