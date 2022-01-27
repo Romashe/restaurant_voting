@@ -15,6 +15,6 @@ import java.util.Optional;
 public interface UserRepository extends BaseRepository<User> {
 
     @Query("SELECT u FROM User u WHERE u.email = LOWER(:email)")
-    @Cacheable
+    @Cacheable(value = "users", key = "#email")
     Optional<User> findByEmailIgnoreCase(String email);
 }

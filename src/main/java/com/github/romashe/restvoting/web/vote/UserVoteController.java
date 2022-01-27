@@ -6,15 +6,12 @@ import com.github.romashe.restvoting.model.Vote;
 import com.github.romashe.restvoting.repository.RestaurantRepository;
 import com.github.romashe.restvoting.repository.VoteRepository;
 import com.github.romashe.restvoting.to.VoteTo;
-import com.github.romashe.restvoting.util.validation.ValidationUtil;
 import com.github.romashe.restvoting.web.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,7 +35,6 @@ import static com.github.romashe.restvoting.web.vote.UserVoteController.REST_URL
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "ratings")
 public class UserVoteController {
     public static final String REST_URL = "/api/votes";
     final private RestaurantRepository restaurantRepository;
@@ -71,7 +67,7 @@ public class UserVoteController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    @CachePut(value = "ratings")
+    @CacheEvict(value = {"ratings"}, allEntries = true)
     @Operation(summary = "You can vote right here", description = "Voting is only possible for today's date")
     public ResponseEntity<Vote> createVote(@Valid @RequestBody VoteTo voteTo,
                                            @AuthenticationPrincipal AuthUser authUser) {
@@ -80,9 +76,9 @@ public class UserVoteController {
         if (pastVote.isPresent()) {
             throw (new IllegalRequestDataException("You have voted today already. Use PUT to change your mind"));
         }
+
         Restaurant votedRestaurant = restaurantRepository.getById(voteTo.getRestaurantId());
-        Vote vote = new Vote(LocalDate.now(), votedRestaurant, authUser.getUser());
-        ValidationUtil.checkNew(vote);
+        Vote vote = new Vote(LocalDate.now(), votedRestaurant, authUser.getUser(), votedRestaurant.getId());
         Vote created = voteRepository.save(vote);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -93,7 +89,7 @@ public class UserVoteController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value = "ratings", allEntries = true)
+    @CacheEvict(value = {"ratings"}, allEntries = true)
     @Operation(summary = "You can change your vote right here", description = "Vote can't be changed after 11:00")
     public void updateVote(@Valid @RequestBody VoteTo voteTo, @AuthenticationPrincipal AuthUser authUser) {
         log.info("update Vote {}", voteTo);

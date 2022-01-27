@@ -41,6 +41,7 @@ logging:
     org.springframework.orm.jpa.JpaTransactionManager: DEBUG
     com.github.romashe.restvoting: DEBUG
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
+    #    org.springframework.cache: TRACE
     #    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: DEBUG
     #    org.hibernate.type.descriptor.sql: TRACE
 

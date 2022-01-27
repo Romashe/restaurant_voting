@@ -9,9 +9,7 @@ import com.github.romashe.restvoting.util.JsonViews;
 import com.github.romashe.restvoting.util.validation.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,7 +30,6 @@ import static com.github.romashe.restvoting.web.restaurant.AdminRestaurantContro
 @RequestMapping(value = REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = {"ratings", "restMenuItems"})
 public class AdminMenuItemController {
     final private RestaurantRepository restaurantRepository;
     final private MenuItemRepository menuItemRepository;
@@ -62,7 +59,7 @@ public class AdminMenuItemController {
 
     @DeleteMapping("/{restaurantId}/menu-items/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value={"ratings", "restMenuItems"}, allEntries = true)
+    @CacheEvict(value = {"ratings", "restMenuItems"}, allEntries = true)
     public void delete(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("delete Menu with id={} for Restaurant with id={} ", restaurantId, id);
         menuItemRepository.deleteExistedMenuItemByRestIdAndItemIdWithCheck(restaurantId, id);
@@ -71,7 +68,7 @@ public class AdminMenuItemController {
     @JsonView(JsonViews.Public.class)
     @PostMapping(value = "/{restaurantId}/menu-items/", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    @CachePut(value={"ratings", "restMenuItems"})
+    @CacheEvict(value = {"ratings", "restMenuItems"}, allEntries = true)
     public ResponseEntity<MenuItem> createMenuItem(@Valid @RequestBody MenuItem menuItem, @PathVariable int restaurantId) {
         log.info("create {}", menuItem);
         ValidationUtil.checkNew(menuItem);
@@ -87,7 +84,7 @@ public class AdminMenuItemController {
     @PutMapping(value = "/{restaurantId}/menu-items/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value={"ratings", "restMenuItems"}, allEntries = true)
+    @CacheEvict(value = {"ratings", "restMenuItems"}, allEntries = true)
     public void updateMenuItem(@Valid @RequestBody MenuItem menuItem,
                                @PathVariable int restaurantId, @PathVariable int id) {
         log.info("update MenuItem with id={} for Restaurant with id={}", menuItem, restaurantId);

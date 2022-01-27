@@ -85,7 +85,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void createConflictVote() throws Exception {
-        VoteTo newVoteTo = new VoteTo(null, userVoteToday.getRestaurantId());
+        VoteTo newVoteTo = new VoteTo(null, userVoteToday.getRestaurant().getId());
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newVoteTo)))
@@ -96,7 +96,7 @@ class UserVoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void updateVote() throws Exception {
-        VoteTo updVoteTo = new VoteTo(null, userVoteYesterday.getRestaurantId());
+        VoteTo updVoteTo = new VoteTo(null, userVoteYesterday.getRestaurant().getId());
         ResultActions action = perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updVoteTo)))

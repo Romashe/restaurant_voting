@@ -43,7 +43,7 @@ public class ProfileController extends AbstractUserController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @CachePut
+    @CachePut(key = "#userTo.email")
     public ResponseEntity<User> register(@Valid @RequestBody UserTo userTo) {
         log.info("register {}", userTo);
         ValidationUtil.checkNew(userTo);
@@ -56,7 +56,7 @@ public class ProfileController extends AbstractUserController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    @CacheEvict("key=#userTo.email")
+    @CacheEvict(key = "#userTo.email")
     public void update(@RequestBody @Valid UserTo userTo, @AuthenticationPrincipal AuthUser authUser) {
         ValidationUtil.assureIdConsistent(userTo, authUser.id());
         User user = authUser.getUser();
