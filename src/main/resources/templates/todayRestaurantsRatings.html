@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/common.js}" defer></script>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<!--restaurant cards-->
+<div class="content">
+    <h7>User Name:</h7>
+    <h7 th:text="${userName}"></h7>
+    <h1 th:text="${title}"></h1>
+    <div class="card-group">
+        <div th:each="restaurant: ${restaurants}">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${restaurant.name}"></h5>
+                    <div class="restaurantId" th:text="${restaurant.id}"></div>
+                    <p class="card-text">
+                    <div th:each="menuItem: ${restaurant.menuItems}">
+                        <div th:text="${menuItem.name}+' '+${menuItem.price}/100+' $'"></div>
+                    </div>
+                    </p>
+                    <div>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted" th:text="'vote count: '+${restaurant.voteCount}"></small>
+                        <br>
+                        <th>
+                            <button class="newvote">Vote</button>
+                        </th>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--popup-->
+    <div class="popup-overlay">
+        <div class="popup-content">
+            <h2>Warning</h2>
+            <p class="warnText">Text</p>
+            <button class="revote">Change Vote</button>
+            <button class="close">Close</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
