@@ -23,14 +23,20 @@ public class UserUIRestaurantController {
     private final RestaurantRepository restaurantRepository;
     private final VoteRepository voteRepository;
 
-    @GetMapping("ratings")
+    @GetMapping("/ratings")
     @Transactional
-    public String todayRestaurantsRatings (Model model, @AuthenticationPrincipal AuthUser authUser){
+    public String todayRestaurantsRatings(Model model, @AuthenticationPrincipal AuthUser authUser) {
         log.info("getAllRestaurantWithMenuByTodayWithRating for Today");
         List<RestaurantTo> restaurantToList = RestaurantUtil.convertListTo(restaurantRepository.getAllWithMenu(), voteRepository.findAllTodayVotes());
-        model.addAttribute("userName", authUser.getUsername());
         model.addAttribute("title", "Today Restaurants Ratings");
         model.addAttribute("restaurants", restaurantToList);
         return "todayRestaurantsRatings";
+    }
+
+    @GetMapping("/")
+    @Transactional
+    public String welcomePage() {
+        log.info("welcomePage");
+        return "redirect:ratings";
     }
 }

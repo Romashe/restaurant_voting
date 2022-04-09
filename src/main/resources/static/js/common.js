@@ -1,15 +1,21 @@
-const userAjaxUrl = "api/votes";
+const userAjaxUrl = "ratings/votes";
 let restId;
 
+$.ajaxSetup({
+    beforeSend: function (xhr) {
+        xhr.setRequestHeader('X-CSRF-TOKEN', $("meta[name='_csrf']").attr("content"));
+    }
+});
+
 $(".newvote").click(function () {
-    console.log("newVoteId: "+$(this).parent().parent().find('.restaurantId').text());
+    console.log("newVoteId: " + $(this).parent().parent().find('.restaurantId').text());
     restId = $(this).parent().parent().find('.restaurantId').text();
     //  https://stackoverflow.com/a/22213543/548473
     $.ajax({
         url: userAjaxUrl,
         type: "POST",
         data: JSON.stringify({
-            restaurantId: $(this).parent().parent().find('.restaurantId').text()
+            restaurantId: restId
         }),
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
@@ -17,8 +23,11 @@ $(".newvote").click(function () {
             openPopup("Your vote accepted", false);
         },
         error: function (error) {
-            if (error.responseJSON.message === "You have voted today already. Use PUT to change your mind") {
+            if (error.responseJSON != null && error.responseJSON.message === "You have voted today already. Use PUT to change your mind") {
                 openPopup("You have already voted today", true);
+            } else if (error.responseJSON != null && error.status == 422) {
+                console.log("Something went wrong", error);
+                openPopup(error.responseJSON.message, false);
             } else {
                 console.log("Something went wrong", error);
                 openPopup(error.responseText, false);
@@ -28,7 +37,7 @@ $(".newvote").click(function () {
 });
 
 $(".revote, .popup").click(function () {
-    console.log("reVoteId: "+restId);
+    console.log("reVoteId: " + restId);
     $.ajax({
         url: userAjaxUrl,
         type: "PUT",

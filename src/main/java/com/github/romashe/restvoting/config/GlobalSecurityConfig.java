@@ -1,7 +1,6 @@
 package com.github.romashe.restvoting.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.romashe.restvoting.model.Role;
 import com.github.romashe.restvoting.model.User;
 import com.github.romashe.restvoting.repository.UserRepository;
 import com.github.romashe.restvoting.util.JsonUtil;
@@ -11,24 +10,18 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
-@Configuration
 @EnableWebSecurity
 @Slf4j
 @AllArgsConstructor
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
+public class GlobalSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserRepository userRepository;
 
     @Autowired
@@ -57,16 +50,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService())
                 .passwordEncoder(UserUtil.PASSWORD_ENCODER);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
-                .antMatchers(HttpMethod.POST, "/api/profile").anonymous()
-                .antMatchers("/api/**", "/ratings").authenticated()
-                .and().httpBasic()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().csrf().disable();
     }
 }

@@ -10,10 +10,13 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet"/>
 </head>
 <body>
+<form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
+    <input type="submit" value="Logout"/>
+</form>
 <!--restaurant cards-->
 <div class="content">
-    <h7>User Name:</h7>
-    <h7 th:text="${userName}"></h7>
+    <a href="javascript: document.logoutForm.submit()">Logout:</a>
+    <h7 th:text="${#authentication.name}"></h7>
     <h1 th:text="${title}"></h1>
     <div class="card-group">
         <div th:each="restaurant: ${restaurants}">
@@ -51,5 +54,8 @@
         </div>
     </div>
 </div>
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+<meta name="_auth_flg" th:content="${#authorization.expression('isAuthenticated()')}"/>
 </body>
 </html>
