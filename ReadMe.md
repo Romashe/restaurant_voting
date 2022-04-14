@@ -18,6 +18,9 @@ System for deciding where to have lunch.
   * `mvn package -f pom.xml` from project root
   * run `target/restaurant_voting-1.0.jar`
 
+## WebUI for ratings and votes
+http://localhost
+
 ## Test users
 - Admin: admin@mail.com / admin
 - User: user@mail.com / password
